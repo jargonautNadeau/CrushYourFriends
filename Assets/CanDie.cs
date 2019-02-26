@@ -7,6 +7,8 @@ public class CanDie : MonoBehaviour
     public float depthBeforeDeath = -4.0f;
     public int numLives = 1;
 
+    public delegate void playerDiedDelegate ();
+	public playerDiedDelegate isDead;
     // Update is called once per frame
     void Update()
     {
@@ -18,15 +20,18 @@ public class CanDie : MonoBehaviour
         if(numLives > 1) {
             //Lose a life
             numLives -= 1;
-            RespawnPlayer();
+            Vector3 spawnLoc = new Vector3(3,1,10);
+            RespawnPlayer(spawnLoc);
         } else if (numLives <= 1) {
             // Death insues
             //RoundManager.KillPlayer(gameObject);
-
+            isDead();
+            Destroy(gameObject);
+            
         }
     }
-    void RespawnPlayer() {
+    void RespawnPlayer(Vector3 respawnPos) {
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
-        rb.MovePosition(new Vector3(0,0,0));
+        rb.MovePosition(respawnPos);
     }
 }

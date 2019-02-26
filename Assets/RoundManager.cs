@@ -6,19 +6,52 @@ public class RoundManager : MonoBehaviour
 {
     public GameObject gridBlockParent;
     public int numTargetBlocks = 5;
-    // Start is called before the first frame update
+    public float blockFadeSpeed = 4.0f;
+    public float blockHiddenTime = 6.0f;
+    public float extraTimePerRound = 1.5f;
+    public Color startColor = Color.white;
+    public Color fadeColor = Color.black;
     void Start()
     {
-        List<GameObject> targets = SelectTargetBlocks(numTargetBlocks);
-        foreach(GameObject gobj in targets){
-            gobj.SetActive(false);
-        }
+        Debug.Log("This grid is empty. Calling for new grid");
+        LevelManager levelMan = gameObject.GetComponent<LevelManager>();
+        levelMan.Build3DGrid();
+        Debug.Log("New grid count = "+GetTotalBlocks());
+        StartCoroutine(StartRounds());
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    IEnumerator StartRounds(){
+        while(GetNumPlayersAlive() > 0){
+            List<GameObject> targets = SelectTargetBlocks(numTargetBlocks);
+            StartCoroutine(FadeBlock(targets));
+            yield return new WaitForSeconds((blockFadeSpeed*2)+blockHiddenTime+extraTimePerRound);
+        }
+    }
+    IEnumerator FadeBlock(List<GameObject> targetList) {
+        for (float f = blockFadeSpeed; f >= 0; f -= 0.1f) 
+        {
+            foreach(GameObject gobj in targetList) {
+                Color newColor = Color.Lerp(fadeColor,startColor,f/blockFadeSpeed);
+                gobj.GetComponent<Renderer>().material.color = newColor;
+            }
+            yield return new WaitForSeconds(.1f);
+        }
+        foreach(GameObject gobj in targetList) {
+            gobj.GetComponent<BoxCollider>().enabled = false;
+        }
+        yield return new WaitForSeconds(blockHiddenTime);
+        for (float f = 0; f <= blockFadeSpeed; f += 0.1f) 
+        {
+            foreach(GameObject gobj in targetList) {
+                Color newColor = Color.Lerp(fadeColor,startColor,f/blockFadeSpeed);
+                gobj.GetComponent<Renderer>().material.color = newColor;
+            }
+            yield return new WaitForSeconds(.1f);
+        }
+        foreach(GameObject gobj in targetList) {
+            gobj.GetComponent<BoxCollider>().enabled = true;
+        }
     }
     private List<GameObject> SelectTargetBlocks(int numTargets){
         List<GameObject> targetArray = new List<GameObject>();
@@ -30,7 +63,6 @@ public class RoundManager : MonoBehaviour
                 selectedTargetIndex = Random.Range (0, GetTotalBlocks());
                 alreadySelected.Add(selectedTargetIndex);
             }
-            Debug.Log("selectedTargetIndex: "+selectedTargetIndex);
             targetArray.Add(gridBlockParent.transform.GetChild(selectedTargetIndex).gameObject);
         }
         return targetArray;
@@ -41,5 +73,9 @@ public class RoundManager : MonoBehaviour
     }
     private int GetTotalBlocks(){
         return gridBlockParent.transform.childCount;
+    }
+    private int GetNumPlayersAlive() {
+        GameObject[] playerList = GameObject.FindGameObjectsWithTag("Player");
+        return playerList.Length;
     }
 }
