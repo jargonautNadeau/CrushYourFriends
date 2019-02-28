@@ -6,10 +6,12 @@ public class playerMovement : MonoBehaviour
 {
     public float speed = 10.0f;
     public float rotationSpeed = 100.0f;
+
+    private Animator anim;
     // Start is called before the first frame update
     void Start()
     {
-        
+        anim = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -24,8 +26,12 @@ public class playerMovement : MonoBehaviour
 
         // Move translation along the object's z-axis
         transform.Translate(0, 0, translation);
-
         // Rotate around our y-axis
         transform.Rotate(0, rotation, 0);
+        if(translation == 0 && rotation == 0){
+            anim.SetBool("isWalking",false);
+        } else {
+            anim.SetBool("isWalking",true);
+        }
     }
 }
