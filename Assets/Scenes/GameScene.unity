@@ -164,12 +164,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridBlockParent: {fileID: 1560265009}
-  numTargetBlocks: 5
-  blockFadeSpeed: 2.5
+  numTargetBlocks: 15
+  blockFadeSpeed: 2
   blockHiddenTime: 3
   extraTimePerRound: 1.5
-  startColor: {r: 1, g: 1, b: 1, a: 1}
-  fadeColor: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 0.5921569}
+  startColor: {r: 0, g: 0.6039216, b: 0.13333334, a: 1}
+  fadeColor: {r: 0, g: 0.08670282, b: 0.699, a: 0}
+  playerPrefab: {fileID: 0}
+  cameraPrefab: {fileID: 0}
 --- !u!114 &169014498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,6 +377,7 @@ GameObject:
   - component: {fileID: 534669905}
   - component: {fileID: 534669904}
   - component: {fileID: 534669903}
+  - component: {fileID: 534669906}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -439,13 +442,29 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0.23654822, y: -0, z: -0, w: 0.9716198}
-  m_LocalPosition: {x: 0, y: 5.68, z: -7.58}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
+  m_LocalPosition: {x: 3, y: 3, z: 7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 27.366001, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
+--- !u!114 &534669906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534669902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3eb321cb60eb14fa83a9e8769cd812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 202608806}
+  offsetPosition: {x: 0, y: 2, z: -2.5}
+  offsetPositionSpace: 1
+  lookAt: 1
 --- !u!1 &548267725
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,6 +651,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 2732fe64dd2799f439fb845921df626b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 2732fe64dd2799f439fb845921df626b, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: d3aef18319be4974bb573d8de1a551d2, type: 2}
+    - target: {fileID: 9500000, guid: 2732fe64dd2799f439fb845921df626b, type: 3}
+      propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

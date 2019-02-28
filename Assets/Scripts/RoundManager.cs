@@ -11,12 +11,13 @@ public class RoundManager : MonoBehaviour
     public float extraTimePerRound = 1.5f;
     public Color startColor = Color.white;
     public Color fadeColor = Color.black;
+
+    public GameObject playerPrefab;
+    public GameObject cameraPrefab;
     void Start()
     {
-        Debug.Log("This grid is empty. Calling for new grid");
         LevelManager levelMan = gameObject.GetComponent<LevelManager>();
         levelMan.Build3DGrid();
-        Debug.Log("New grid count = "+GetTotalBlocks());
         StartCoroutine(StartRounds());
     }
 
@@ -26,6 +27,7 @@ public class RoundManager : MonoBehaviour
             List<GameObject> targets = SelectTargetBlocks(numTargetBlocks);
             StartCoroutine(FadeBlock(targets));
             yield return new WaitForSeconds((blockFadeSpeed*2)+blockHiddenTime+extraTimePerRound);
+            numTargetBlocks = Mathf.Clamp(numTargetBlocks + 5, 0, GetTotalBlocks());
         }
     }
     IEnumerator FadeBlock(List<GameObject> targetList) {
@@ -61,8 +63,8 @@ public class RoundManager : MonoBehaviour
             //While selectedTargetID has already been selected
             while(alreadySelected.Contains(selectedTargetIndex)){
                 selectedTargetIndex = Random.Range (0, GetTotalBlocks());
-                alreadySelected.Add(selectedTargetIndex);
             }
+            alreadySelected.Add(selectedTargetIndex);
             targetArray.Add(gridBlockParent.transform.GetChild(selectedTargetIndex).gameObject);
         }
         return targetArray;
