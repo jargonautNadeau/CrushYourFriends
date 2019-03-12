@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CanDie : MonoBehaviour
 {
     public float depthBeforeDeath = -4.0f;
     public int numLives = 1;
 
-    public delegate void playerDiedDelegate ();
-	public playerDiedDelegate isDead;
+    public Action isDead;
+
     // Update is called once per frame
     void Update()
     {
@@ -16,12 +17,10 @@ public class CanDie : MonoBehaviour
             tryKillThySelf();
         }
     }
-    void tryKillThySelf() {
+    public void tryKillThySelf() {
         if(numLives > 1) {
             //Lose a life
-            numLives -= 1;
-            Vector3 spawnLoc = new Vector3(3,1,10);
-            RespawnPlayer(spawnLoc);
+            gameObject.SetActive(false);
         } else if (numLives <= 1) {
             // Death insues
             //RoundManager.KillPlayer(gameObject);
@@ -30,8 +29,12 @@ public class CanDie : MonoBehaviour
             
         }
     }
-    void RespawnPlayer(Vector3 respawnPos) {
+    public void RespawnPlayer(Vector3 respawnPos) {
+        numLives -= 1;
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+        Debug.Log("RespawningSelf at: "+respawnPos);
+        gameObject.SetActive(true);
         rb.MovePosition(respawnPos);
+        
     }
 }

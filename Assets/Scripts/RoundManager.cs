@@ -11,11 +11,16 @@ public class RoundManager : MonoBehaviour
     public float extraTimePerRound = 1.5f;
     public Color startColor = Color.white;
     public Color fadeColor = Color.black;
-
+    public float dropdistance = 10.0f;
+    public GameObject crushingBrick;
     public GameObject playerPrefab;
     public GameObject cameraPrefab;
+    public GameObject gridParent;
+    public Vector3 respawnLoc = new Vector3(3,1,10);
+    private GameObject[] playerss;
     void Start()
     {
+        playerss = GameObject.FindGameObjectsWithTag("Player");
         LevelManager levelMan = gameObject.GetComponent<LevelManager>();
         levelMan.Build3DGrid();
         StartCoroutine(StartRounds());
@@ -23,11 +28,15 @@ public class RoundManager : MonoBehaviour
 
     // Update is called once per frame
     IEnumerator StartRounds(){
-        while(GetNumPlayersAlive() > 0){
+        while(GetPlayersAlive().Count > 0){
             List<GameObject> targets = SelectTargetBlocks(numTargetBlocks);
-            StartCoroutine(FadeBlock(targets));
+            //StartCoroutine(FadeBlock(targets));
+            StartCoroutine(DropBlock(targets));
             yield return new WaitForSeconds((blockFadeSpeed*2)+blockHiddenTime+extraTimePerRound);
+            ClearCrushingBlocks();
+            RespawnPlayers();
             numTargetBlocks = Mathf.Clamp(numTargetBlocks + 5, 0, GetTotalBlocks());
+            
         }
     }
     IEnumerator FadeBlock(List<GameObject> targetList) {
@@ -39,9 +48,6 @@ public class RoundManager : MonoBehaviour
             }
             yield return new WaitForSeconds(.1f);
         }
-        foreach(GameObject gobj in targetList) {
-            gobj.GetComponent<BoxCollider>().enabled = false;
-        }
         yield return new WaitForSeconds(blockHiddenTime);
         for (float f = 0; f <= blockFadeSpeed; f += 0.1f) 
         {
@@ -51,8 +57,18 @@ public class RoundManager : MonoBehaviour
             }
             yield return new WaitForSeconds(.1f);
         }
+    }
+    IEnumerator DropBlock(List<GameObject> targetList){
         foreach(GameObject gobj in targetList) {
-            gobj.GetComponent<BoxCollider>().enabled = true;
+            GameObject brickToDrop = Instantiate(crushingBrick,gobj.transform.position + (Vector3.up *dropdistance),Quaternion.identity);
+            brickToDrop.transform.parent = gridParent.transform;
+            brickToDrop.name = "Crushing_"+gobj.name;
+        }
+        yield return null;
+    }
+    private void ClearCrushingBlocks(){
+        foreach(GameObject obstacle in GameObject.FindGameObjectsWithTag("Obstacles")) {
+            Destroy(obstacle);
         }
     }
     private List<GameObject> SelectTargetBlocks(int numTargets){
@@ -76,8 +92,24 @@ public class RoundManager : MonoBehaviour
     private int GetTotalBlocks(){
         return gridBlockParent.transform.childCount;
     }
-    private int GetNumPlayersAlive() {
-        GameObject[] playerList = GameObject.FindGameObjectsWithTag("Player");
-        return playerList.Length;
+    private List<GameObject> GetPlayersAlive() {
+        List<GameObject> playerList = new List<GameObject>();
+        foreach(GameObject player in playerss){
+            if(player.GetComponent<CanDie>().numLives > 0) {
+                playerList.Add(player);
+            }
+        }
+        return playerList;
     }
+    private void RespawnPlayers(){
+        
+        foreach(GameObject player in GetPlayersAlive()){
+            if(!player.activeSelf){
+                Debug.Log("RespawnLocation: "+respawnLoc);
+                player.GetComponent<CanDie>().RespawnPlayer(respawnLoc);
+            }
+        }
+            
+    }
+
 }

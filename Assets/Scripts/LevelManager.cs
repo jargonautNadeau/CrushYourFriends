@@ -31,6 +31,7 @@ public class LevelManager : MonoBehaviour
         GameObject newObj;
         newObj = Instantiate(platformCell, position, Quaternion.identity);
         newObj.transform.parent = gridParent.transform;
+        newObj.name = "GroundCube_"+newObj.transform.GetSiblingIndex();
     }
 
 }

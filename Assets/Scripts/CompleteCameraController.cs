@@ -4,10 +4,10 @@ using System.Collections;
 public class CompleteCameraController : MonoBehaviour {
  
      [SerializeField]
-     private Transform target;
+     public Transform target;
  
      [SerializeField]
-     private Vector3 offsetPosition;
+     public Vector3 offsetPosition;
  
      [SerializeField]
      private Space offsetPositionSpace = Space.Self;
