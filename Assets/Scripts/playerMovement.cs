@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
+    public Movement movement;
+
+
     public float speed = 10.0f;
     public float rotationSpeed = 100.0f;
 
@@ -12,6 +15,7 @@ public class playerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        movement = new Movement();
         anim = GetComponentInChildren<Animator>();
     }
 
@@ -26,18 +30,15 @@ public class playerMovement : MonoBehaviour
         }
         
         if(!attacking) {
-            float translation = Input.GetAxis("Vertical") * speed;
-            float rotation = Input.GetAxis("Horizontal") * rotationSpeed;
-
             // Make it move 10 meters per second instead of 10 meters per frame...
-            translation *= Time.deltaTime;
-            rotation *= Time.deltaTime;
-
+            Vector3 rotation = movement.CalculateRotation(Input.GetAxis("Horizontal"),rotationSpeed,Time.deltaTime);
+            Vector3 translation = movement.CalculatePosition(Input.GetAxis("Vertical"),speed,Time.deltaTime);
             // Move translation along the object's z-axis
-            transform.Translate(0, 0, translation);
+            transform.Translate(translation);
             // Rotate around our y-axis
-            transform.Rotate(0, rotation, 0);
-            if(translation == 0 && rotation == 0){
+            transform.Rotate(rotation);
+            
+            if(translation.magnitude == 0f && rotation.magnitude == 0f){
                 anim.SetBool("isWalking",false);
             } else {
                 anim.SetBool("isWalking",true);
